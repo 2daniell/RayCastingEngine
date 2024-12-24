@@ -2,35 +2,43 @@ package com.daniel.core.location;
 
 public class Location {
 
-    private int locX, locY;
+    private int x, y;
 
     public Location() {
         this(0, 0);
     }
 
     public Location(int locX, int locY) {
-        this.locX = locX;
-        this.locY = locY;
+        this.x = locX;
+        this.y = locY;
     }
 
-    public void setLocX(int locX) {
-        this.locX = locX;
+    public void setX(int x) {
+        this.x = x;
     }
 
-    public void setLocY(int locY) {
-        this.locY = locY;
+    public void setY(int y) {
+        this.y = y;
     }
 
     public void setLoc(int locX, int locY) {
-        this.locX = locX;
-        this.locY = locY;
+        this.x = locX;
+        this.y = locY;
     }
 
-    public int getLocY() {
-        return locY;
+    public int getY() {
+        return y;
     }
 
-    public int getLocX() {
-        return locX;
+    public int getX() {
+        return x;
+    }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "locX=" + x +
+                ", locY=" + y +
+                '}';
     }
 }
