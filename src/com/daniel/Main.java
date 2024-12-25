@@ -32,6 +32,7 @@ public class Main {
         Scene scene = new Scene(camera, level, engine.getBuffer());
 
         engine.setScene(scene);
+        engine.showFPS();
         engine.init();
 
     }

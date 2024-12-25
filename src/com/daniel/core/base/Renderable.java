@@ -1,6 +1,8 @@
 package com.daniel.core.base;
 
+import java.awt.*;
+
 public interface Renderable {
 
-    void render();
+    void render(Graphics2D g);
 }

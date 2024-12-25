@@ -1,28 +1,27 @@
 package com.daniel.core.model;
 
-import com.daniel.core.location.Location;
+import com.sun.security.jgss.GSSUtil;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class Camera implements KeyListener {
 
-    private double angle;
-    private double moveSpeed = 1.0;
-    private double rotationSpeed = Math.PI / 32;
-    private Location location;
+    private static final double FOV_FACTOR = 0.66;
 
+    private static final double MOVE_SPEED = 0.2;
+    private static final double ROTATE_SPEED = 0.08;
+
+    private double posX, posY;
+    private double dirX, dirY;
+    private double planeX, planeY;
     public Camera() {
-        this.angle = Math.PI / 2;
-        this.location = new Location();
-    }
-
-    public double getAngle() {
-        return angle;
-    }
-
-    public Location getLocation() {
-        return location;
+        this.planeX = 0.66;
+        this.planeY = 0;
+        this.dirX = 0;
+        this.dirY = -1;
+        this.posX = 5;
+        this.posY = 5;
     }
 
     @Override
@@ -35,30 +34,59 @@ public class Camera implements KeyListener {
         int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_W) {
-            location.setX((int)(location.getX() + Math.cos(angle) * moveSpeed));
-            location.setY((int)(location.getY() + Math.sin(angle) * moveSpeed));
-        } else if (key == KeyEvent.VK_S) {
-            location.setX((int)(location.getX() - Math.cos(angle) * moveSpeed));
-            location.setY((int)(location.getY() - Math.sin(angle) * moveSpeed));
+            posX += dirX * MOVE_SPEED;
+            posY += dirY * MOVE_SPEED;
         }
+        if (key == KeyEvent.VK_S) {
+            posX -= dirX * MOVE_SPEED;
+            posY -= dirY * MOVE_SPEED;
+        }
+        if (key == KeyEvent.VK_D) {
+            double oldDirX = dirX;
+            dirX = dirX * Math.cos(ROTATE_SPEED) - dirY * Math.sin(ROTATE_SPEED);
+            dirY = oldDirX * Math.sin(ROTATE_SPEED) + dirY * Math.cos(ROTATE_SPEED);
 
+            double oldPlaneX = planeX;
+            planeX = planeX * Math.cos(ROTATE_SPEED) - planeY * Math.sin(ROTATE_SPEED);
+            planeY = oldPlaneX * Math.sin(ROTATE_SPEED) + planeY * Math.cos(ROTATE_SPEED);
+        }
         if (key == KeyEvent.VK_A) {
-            location.setX((int)(location.getX() - Math.sin(angle) * moveSpeed));
-            location.setY((int)(location.getY() + Math.cos(angle) * moveSpeed));
-        } else if (key == KeyEvent.VK_D) {
-            location.setX((int)(location.getX() + Math.sin(angle) * moveSpeed));
-            location.setY((int)(location.getY() - Math.cos(angle) * moveSpeed));
-        }
+            double oldDirX = dirX;
+            dirX = dirX * Math.cos(-ROTATE_SPEED) - dirY * Math.sin(-ROTATE_SPEED);
+            dirY = oldDirX * Math.sin(-ROTATE_SPEED) + dirY * Math.cos(-ROTATE_SPEED);
 
-        if (key == KeyEvent.VK_LEFT) {
-            angle -= rotationSpeed;
-        } else if (key == KeyEvent.VK_RIGHT) {
-            angle += rotationSpeed;
+            double oldPlaneX = planeX;
+            planeX = planeX * Math.cos(-ROTATE_SPEED) - planeY * Math.sin(-ROTATE_SPEED);
+            planeY = oldPlaneX * Math.sin(-ROTATE_SPEED) + planeY * Math.cos(-ROTATE_SPEED);
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
 
+    }
+
+    public double getPosX() {
+        return posX;
+    }
+
+    public double getPosY() {
+        return posY;
+    }
+
+    public double getDirX() {
+        return dirX;
+    }
+
+    public double getDirY() {
+        return dirY;
+    }
+
+    public double getPlaneX() {
+        return planeX;
+    }
+
+    public double getPlaneY() {
+        return planeY;
     }
 }
