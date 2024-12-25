@@ -1,7 +1,5 @@
 package com.daniel.core;
 
-import com.daniel.core.model.Camera;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -13,42 +11,14 @@ public class Engine extends JFrame implements Runnable {
 
     private int currentFPS = 0;
     private boolean showFPS = false;
+    private boolean showMinimap = false;
 
-    public Engine() {
-        this.buffer = new BufferedImage(800, 600, BufferedImage.TYPE_INT_RGB);
+    public Engine(int width, int height) {
+        this.buffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(800, 600);
-        setResizable(false);
-    }
-
-    public void render3D() {
-        Graphics2D g = (Graphics2D) buffer.getGraphics();
-
-        scene.render(g);
-
-        if (showFPS) {
-            g.setColor(Color.YELLOW);
-            Font font = new Font("Arial", Font.BOLD, 20);
-            g.setFont(font);
-            g.drawString("FPS: " + currentFPS, 10, 60);
-
-        }
-
-        renderMinimap(g);
-
-        g.dispose();
-    }
-
-    public void init() {
-        if (scene == null) throw new RuntimeException("Scene is not set");
-
-        new Thread(this).start();
-
-        setFocusable(true);
-        addKeyListener(scene.getCamera());
-        addMouseMotionListener(scene.getCamera());
-        setVisible(true);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setSize(width, height);
+        this.setResizable(false);
     }
 
     @Override
@@ -91,6 +61,27 @@ public class Engine extends JFrame implements Runnable {
         }
     }
 
+    private void render3D() {
+        Graphics2D g = (Graphics2D) buffer.getGraphics();
+
+        scene.render(g);
+
+        if (showFPS) {
+            g.setColor(Color.YELLOW);
+            Font font = new Font("Arial", Font.BOLD, 20);
+            g.setFont(font);
+            g.drawString("FPS: " + currentFPS, 10, 60);
+
+        }
+
+        if (showMinimap) {
+            renderMinimap(g);
+        }
+
+
+        g.dispose();
+    }
+
     private void renderMinimap(Graphics2D g) {
 
         int[][] map = scene.getLevel().getMap();
@@ -114,22 +105,12 @@ public class Engine extends JFrame implements Runnable {
             }
         }
 
-        drawPlayer(offsetX, offsetY, tileSize, g);
-    }
-
-    private void drawPlayer(int offsetX, int offsetY, int tileSize, Graphics2D g2d) {
         int cameraX = (int) (offsetX + scene.getCamera().getPosX() * tileSize);
         int cameraY = (int) (offsetY + scene.getCamera().getPosX() * tileSize);
-        g2d.setColor(Color.RED);
-        g2d.fillOval(cameraX - 3, cameraY - 3, 6, 6);
+        g.setColor(Color.RED);
+        g.fillOval(cameraX - 3, cameraY - 3, 6, 6);
 
-        drawRays(g2d, cameraX, cameraY, offsetX, offsetY, tileSize);
-    }
-
-    private void drawRays(Graphics2D g, int cameraX, int cameraY, int offsetX, int offsetY, int tileSize) {
         g.setColor(Color.YELLOW);
-
-        int[][] map = scene.getLevel().getMap();
 
         for (int x = 0; x < buffer.getWidth(); x+=10) {
             double rayAngle = (scene.getCamera().getCameraAngle() - Math.PI / 6) + (x * (Math.PI / 3) / buffer.getWidth());
@@ -158,6 +139,17 @@ public class Engine extends JFrame implements Runnable {
         }
     }
 
+    protected void init() {
+        if (scene == null) throw new RuntimeException("Scene is not set");
+
+        new Thread(this).start();
+
+        this.setFocusable(true);
+        this.addKeyListener(scene.getCamera());
+        this.addMouseMotionListener(scene.getCamera());
+        this.setVisible(true);
+    }
+
     @Override
     public void paint(Graphics g) {
         g.drawImage(buffer, 0, 0, this);
@@ -168,19 +160,19 @@ public class Engine extends JFrame implements Runnable {
         super.update(g);
     }
 
-    public void setScene(Scene scene) {
-        this.scene = scene;
+    public void turnFPS() {
+        showFPS = !showFPS;
     }
 
-    public void showFPS() {
-        showFPS = true;
-    }
-
-    public void hideFPS() {
-        showFPS = false;
+    public void turnMinimap() {
+        showMinimap = !showMinimap;
     }
 
     public BufferedImage getBuffer() {
         return buffer;
+    }
+
+    public void setScene(Scene scene) {
+        this.scene = scene;
     }
 }
