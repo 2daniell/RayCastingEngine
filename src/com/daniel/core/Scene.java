@@ -2,11 +2,9 @@ package com.daniel.core;
 
 import com.daniel.core.base.Renderable;
 import com.daniel.core.model.Camera;
-import com.daniel.utils.MathUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Array;
 
 public class Scene implements Renderable {
 
@@ -30,7 +28,6 @@ public class Scene implements Renderable {
 
     @Override
     public void render(Graphics2D g) {
-        int CENTER_SCREEN = buffer.getHeight() / 2;
         g.setColor(Color.CYAN);
         g.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
 
